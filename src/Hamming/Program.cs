@@ -1,4 +1,6 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using RedesNeuronales.Resources.Classes;
+using RedesNeuronales.Resources;
 
 namespace Hamming
 {
@@ -13,6 +15,7 @@ namespace Hamming
             Vector<double> bias;
             double epsilon;
             bool converged = false;
+            InputUtils input = new();
 
             #region User inputs vectors
             Console.Write("Cantidad de vectores a ingresar (M): ");
@@ -24,7 +27,7 @@ namespace Hamming
             for (int i = 0; i < m; i++)
             {
                 Console.Write(string.Format("Vector X{0} (separado por espacios): ", i));
-                Vector<double> vector = Utils.GetVectorFromUser(n);
+                Vector<double> vector = input.GetVectorFromUser(n);
 
                 patterns.Add(new Pattern($"X{i}", vector));
             }
@@ -32,9 +35,9 @@ namespace Hamming
             List<Vector<double>> vectors = patterns.Select(x => x.Vector).ToList(); // extracts Vector property of patterns
             #endregion
 
-            weightMatrix = Utils.BuildWeightMatrix(vectors, m, n);
-            bias = Utils.BuildBiasMatrix(m, n);
-            epsilon = Utils.GetEpsilon(n);
+            weightMatrix = HammingUtils.BuildWeightMatrix(vectors, m, n);
+            bias = HammingUtils.BuildBiasMatrix(m, n);
+            epsilon = HammingUtils.GetEpsilon(n);
 
             Console.Clear();
 
@@ -57,11 +60,11 @@ namespace Hamming
                 
                 #region User inputs test vector
                 Console.Write("Vector de prueba (separado por espacios): ");
-                Vector<double> testVector = Utils.GetVectorFromUser(n);
+                Vector<double> testVector = input.GetVectorFromUser(n);
                 #endregion
 
-                Vector<double> vector = Utils.GetFirstOutput(testVector, n, weightMatrix, bias).ApplyTransferFunction();
-                Console.WriteLine($"U({i}) = {Utils.FormatVector(vector)}");
+                Vector<double> vector = HammingUtils.GetFirstOutput(testVector, n, weightMatrix, bias).ApplyTransferFunction();
+                Console.WriteLine($"U({i}) = {input.FormatVector(vector)}");
                 
                 while (!converged)
                 {
@@ -69,14 +72,14 @@ namespace Hamming
                     {
                         i++;
                     
-                        vector = Utils.HammingFormula(vector, epsilon).ApplyTransferFunction();
-                        Console.WriteLine($"U({i}) = {Utils.FormatVector(vector)}");
+                        vector = HammingUtils.HammingFormula(vector, epsilon).ApplyTransferFunction();
+                        Console.WriteLine($"U({i}) = {input.FormatVector(vector)}");
 
-                        int? positiveIndex = Utils.CheckForPositive(vector);
+                        int? positiveIndex = HammingUtils.CheckForPositive(vector);
                     
                         if (positiveIndex != null)
                         {
-                            Console.WriteLine($"La RN converge y asocia {Utils.FormatVector(testVector)} con {patterns[positiveIndex.Value].Name} = {Utils.FormatVector(patterns[positiveIndex.Value].Vector)}");
+                            Console.WriteLine($"La RN converge y asocia {input.FormatVector(testVector)} con {patterns[positiveIndex.Value].Name} = {input.FormatVector(patterns[positiveIndex.Value].Vector)}");
                             converged = true;
                         }
                     }

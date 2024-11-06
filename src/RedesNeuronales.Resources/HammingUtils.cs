@@ -1,48 +1,9 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 
-namespace Hamming
+namespace RedesNeuronales.Resources
 {
-    public class Pattern
+    public static class HammingUtils
     {
-        public string Name { get; set; }
-        public Vector<double> Vector { get; set; }
-
-        public Pattern(string name, Vector<double> vector)
-        {
-            Name = name;
-            Vector = vector;
-        }
-    }
-
-    public static class Utils
-    {
-        public static string FormatVector(Vector<double> vector)
-        {
-            string result = "[ ";
-            
-            for (int i = 0; i < vector.Count; i++)
-            {
-                result += vector[i] + " ";
-            }
-
-            result += "]";
-
-            return result;
-        }
-
-        public static Vector<double> GetVectorFromUser(int vectorSize)
-        {
-            List<double> row = Console.ReadLine()!.Split(' ').Select(double.Parse).ToList();
-            Vector<double> vector = Vector<double>.Build.Dense(vectorSize);
-
-            for (int j = 0; j < row.Count; j++)
-            {
-                vector[j] = row[j];
-            }
-
-            return vector;
-        }
-
         public static Matrix<double> BuildWeightMatrix(List<Vector<double>> vectors, int m, int n)
         {
             Matrix<double> weightMatrix = Matrix<double>.Build.Dense(m, n); // initializes mxn matrix

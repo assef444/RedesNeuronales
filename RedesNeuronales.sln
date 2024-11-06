@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hamming", "src\Hamming\Hamming.csproj", "{F87E633C-DBF2-49C5-BC74-EF8CDEDF940E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hamming", "src\Hamming\Hamming.csproj", "{F87E633C-DBF2-49C5-BC74-EF8CDEDF940E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{463F8507-5951-4A18-83C1-3AC717EDF17A} = {463F8507-5951-4A18-83C1-3AC717EDF17A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perceptron", "src\Perceptron\Perceptron.csproj", "{524AAB84-1CF2-4720-BBED-DCF1EE68696F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{463F8507-5951-4A18-83C1-3AC717EDF17A} = {463F8507-5951-4A18-83C1-3AC717EDF17A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedesNeuronales.Resources", "src\RedesNeuronales.Resources\RedesNeuronales.Resources.csproj", "{463F8507-5951-4A18-83C1-3AC717EDF17A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +25,14 @@ Global
 		{F87E633C-DBF2-49C5-BC74-EF8CDEDF940E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F87E633C-DBF2-49C5-BC74-EF8CDEDF940E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F87E633C-DBF2-49C5-BC74-EF8CDEDF940E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{524AAB84-1CF2-4720-BBED-DCF1EE68696F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{524AAB84-1CF2-4720-BBED-DCF1EE68696F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{524AAB84-1CF2-4720-BBED-DCF1EE68696F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{524AAB84-1CF2-4720-BBED-DCF1EE68696F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{463F8507-5951-4A18-83C1-3AC717EDF17A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{463F8507-5951-4A18-83C1-3AC717EDF17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{463F8507-5951-4A18-83C1-3AC717EDF17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{463F8507-5951-4A18-83C1-3AC717EDF17A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
