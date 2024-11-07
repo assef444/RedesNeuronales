@@ -18,7 +18,7 @@ namespace RedesNeuronales.Resources
             return result;
         }
 
-        public Vector<double> GetVectorFromUser(int vectorSize)
+        public Vector<double> GetVectorFromUser(int vectorSize = 1)
         {
             List<double> row = Console.ReadLine()!.Split(' ').Select(double.Parse).ToList();
             Vector<double> vector = Vector<double>.Build.Dense(vectorSize);
