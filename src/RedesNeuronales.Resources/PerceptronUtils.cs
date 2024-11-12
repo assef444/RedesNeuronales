@@ -27,7 +27,7 @@ namespace RedesNeuronales.Resources
             return value >= 0 ? 1 : -1;
         }
         
-        public static double CalculateY(Vector<double> vector, Vector<double> weightVector, Vector<double> bias)
+        public static int CalculateY(Vector<double> vector, Vector<double> weightVector, Vector<double> bias)
         {
             return TransferFunction(((vector * weightVector) + bias)[0]);
         }
