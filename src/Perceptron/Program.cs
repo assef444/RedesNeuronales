@@ -151,7 +151,7 @@ namespace Perceptron
                 string testPath = Console.ReadLine()!;
                 Vector<double> testVector = ImageUtils.GetVectorFromImage(testPath);
 
-                y = PerceptronUtils.TransferFunction(PerceptronUtils.CalculateY(testVector, weightVector, bias));
+                y = PerceptronUtils.CalculateY(testVector, weightVector, bias);
                 string output = y == 1 ? "A" : "O";
                 
                 Console.WriteLine($"La red neuronal clasificó la entrada como: {output} ({y}).");
