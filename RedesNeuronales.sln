@@ -15,6 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perceptron", "src\Perceptro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedesNeuronales.Resources", "src\RedesNeuronales.Resources\RedesNeuronales.Resources.csproj", "{463F8507-5951-4A18-83C1-3AC717EDF17A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adaline", "src\Adaline\Adaline.csproj", "{11E4A908-D30B-443B-A2BC-4C87CAD37BDD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{463F8507-5951-4A18-83C1-3AC717EDF17A} = {463F8507-5951-4A18-83C1-3AC717EDF17A}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +38,10 @@ Global
 		{463F8507-5951-4A18-83C1-3AC717EDF17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{463F8507-5951-4A18-83C1-3AC717EDF17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{463F8507-5951-4A18-83C1-3AC717EDF17A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11E4A908-D30B-443B-A2BC-4C87CAD37BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11E4A908-D30B-443B-A2BC-4C87CAD37BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11E4A908-D30B-443B-A2BC-4C87CAD37BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11E4A908-D30B-443B-A2BC-4C87CAD37BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
