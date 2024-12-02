@@ -4,12 +4,22 @@ namespace RedesNeuronales.Resources
 {
     public class AdalineUtils
     {
+        public static Vector<double> NormalizeVector(Vector<double> vector)
+        {
+            double norm = vector.L2Norm();
+            
+            return norm > 0 ? vector / norm : vector;
+        }
+        
         public static double CalculateY(Vector<double> vector, Vector<double> weightVector, Vector<double> bias)
         {
+            double normalizedFactor = vector.L2Norm();
+            vector = normalizedFactor > 0 ? vector / normalizedFactor : vector;
+            
             return ((vector * weightVector) + bias)[0];
         }
 
-        public static double CalculateError(double output, int predictedOutput)
+        public static double CalculateError(double output, double predictedOutput)
         {
             return predictedOutput - output;
         }

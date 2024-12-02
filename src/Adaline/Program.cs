@@ -14,14 +14,19 @@ namespace Adaline
             int n;
             double threshold;
             double epsilon;
-            Vector<double> weightVector;
-            Vector<double> bias;
+            List<Vector<double>> weightVectors = new();
+            List<Vector<double>> biases = new();
             bool learned = false;
             InputUtils input = new();
             double y;
             double error;
             List<PairPattern> patterns = new();
             List<double> errors = new();
+            List<string> labels = new()
+            {
+                "A", "O", "D", "H"
+            };
+            List<double> classErrors = new(labels.Count);
 
             #region User chooses program mode
             Console.Write("Modo programa: \n1. Modo manual.\n2. Modo imágenes.\nSeleccione una opción: ");
@@ -82,8 +87,18 @@ namespace Adaline
                     Vector<double> inputVector = ImageUtils.GetVectorFromImage(file);
                     
                     #region Builds output vector
-                    Vector<double> outputVector = Vector<double>.Build.Dense(1);
-                    outputVector[0] = Path.GetFileName(file)[0].ToString() == "A" ? 1 : -1;
+                    Vector<double> outputVector = Vector<double>.Build.Dense(labels.Count);
+                    string label = Path.GetFileName(file)[0].ToString();
+
+                    int labelIndex = labels.IndexOf(label);
+                    if (labelIndex >= 0)
+                    {
+                        outputVector[labelIndex] = 1;
+                    }
+                    else
+                    {
+                        throw new Exception($"Etiqueta desconocida encontrada en el archivo: {file}");
+                    }
                     #endregion
 
                     patterns.Add(new PairPattern(new Pattern($"X{counter}", inputVector), new Pattern($"Y{counter}", outputVector)));
@@ -94,45 +109,51 @@ namespace Adaline
                 n = patterns[0].Input.Vector.Count;
                 #endregion
             }
-            
-            weightVector = PerceptronUtils.GenerateRandomWeightVector(n);
-            bias = PerceptronUtils.GenerateRandomBias();
 
-            #region Prints values
-            Console.Clear();
-            Console.WriteLine("Vector de pesos aleatorio");
-            Console.WriteLine(weightVector.ToVectorString());
-            
-            Console.WriteLine("Bias aleatorio");
-            Console.WriteLine(bias.ToVectorString());
-
-            Console.WriteLine("=======================================================");
+            #region Initializes weight vector and bias for each label
+            for (int i = 0; i < labels.Count; i++)
+            {
+                weightVectors.Add(PerceptronUtils.GenerateRandomWeightVector(n));
+                biases.Add(PerceptronUtils.GenerateRandomBias());
+            }
             #endregion
 
             int iteration = 0;
             while (!learned)
             {
                 #region Training phase
-                errors.Clear();
+                classErrors.Clear();
 
                 Console.WriteLine(string.Format("[{0:00000}] Calculando iteración.", iteration));
 
                 foreach (var pattern in patterns)
                 {
-                    Vector<double> inputVector = pattern.Input.Vector;
-                    int predictedOutput = (int)pattern.Output.Vector[0];
-                    
-                    y = AdalineUtils.CalculateY(inputVector, weightVector, bias);
-                    error = AdalineUtils.CalculateError(y, predictedOutput);
-                    weightVector = AdalineUtils.CalculateWeightVector(weightVector, threshold, error, inputVector);
-                    bias = AdalineUtils.CalculateBias(bias, threshold, error);
+                    Vector<double> inputVector = AdalineUtils.NormalizeVector(pattern.Input.Vector);
+                    Vector<double> actualOutput = pattern.Output.Vector;
 
-                    errors.Add(error);
+                    for (int classIndex = 0; classIndex < labels.Count; classIndex++)
+                    {
+                        // Desired output for this class (1 for current class, 0 for others)
+                        double desiredOutput = actualOutput[classIndex];
+
+                        // Calculate output for the current Adaline
+                        y = AdalineUtils.CalculateY(inputVector, weightVectors[classIndex], biases[classIndex]);
+
+                        // Calculate error for the current class
+                        error = AdalineUtils.CalculateError(y, desiredOutput);
+
+                        // Update weights and bias for this class
+                        weightVectors[classIndex] = AdalineUtils.CalculateWeightVector(weightVectors[classIndex], threshold, error, inputVector);
+                        biases[classIndex] = AdalineUtils.CalculateBias(biases[classIndex], threshold, error);
+
+                        // Add squared error for this class
+                        classErrors.Add(error * error);
+                    }
                 }
 
                 #region Calculates and checks MSE
-                double mse = errors.Select(x => x * x).Average();
-
+                double mse = classErrors.Average();
+                
                 if (mse < epsilon)
                 {
                     learned = true;
@@ -147,12 +168,6 @@ namespace Adaline
             #region Prints learned weight vector and bias
             Console.Clear();
             Console.WriteLine(string.Format("La red neuronal aprendió exitosamente en la iteración {0}", iteration - 1));
-            
-            Console.WriteLine("Con un vector de pesos ideal: ");
-            Console.WriteLine(weightVector.ToVectorString());
-
-            Console.WriteLine("Y con un bias de peso ideal: ");
-            Console.WriteLine(bias.ToVectorString());
             #endregion
 
             #region Test phase
@@ -164,11 +179,18 @@ namespace Adaline
                 Console.Write("Ingrese ruta de imagen a probar: ");
                 string testPath = Console.ReadLine()!;
                 Vector<double> testVector = ImageUtils.GetVectorFromImage(testPath);
+                List<double> outputs = new();
 
-                y = AdalineUtils.CalculateY(testVector, weightVector, bias);
-                string output = y >= 0 ? "A" : "O";
+                for (int classIndex = 0; classIndex < labels.Count; classIndex++)
+                {
+                    y = AdalineUtils.CalculateY(testVector, weightVectors[classIndex], biases[classIndex]);
+                    outputs.Add(y); // Guarda la salida
+                }
                 
-                Console.WriteLine($"La red neuronal clasificó la entrada como: {output} ({y}).");
+                int predictedClassIndex = outputs.IndexOf(outputs.Max());
+                string predictedLabel = labels[predictedClassIndex]; // Etiqueta asociada
+
+                Console.WriteLine($"La red neuronal clasificó la entrada como: {predictedLabel} ({outputs[predictedClassIndex]}).");
             }
             #endregion
         }
