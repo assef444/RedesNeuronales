@@ -133,21 +133,15 @@ namespace Adaline
 
                     for (int classIndex = 0; classIndex < labels.Count; classIndex++)
                     {
-                        // Desired output for this class (1 for current class, 0 for others)
-                        double desiredOutput = actualOutput[classIndex];
+                        double desiredOutput = actualOutput[classIndex]; // 1 for current class, 0 for other classes
+                        y = AdalineUtils.CalculateY(inputVector, weightVectors[classIndex], biases[classIndex]); // calculates for current adaline
+                        error = AdalineUtils.CalculateError(y, desiredOutput); // error for current class
 
-                        // Calculate output for the current Adaline
-                        y = AdalineUtils.CalculateY(inputVector, weightVectors[classIndex], biases[classIndex]);
-
-                        // Calculate error for the current class
-                        error = AdalineUtils.CalculateError(y, desiredOutput);
-
-                        // Update weights and bias for this class
+                        // updates weight vectors and biases
                         weightVectors[classIndex] = AdalineUtils.CalculateWeightVector(weightVectors[classIndex], threshold, error, inputVector);
                         biases[classIndex] = AdalineUtils.CalculateBias(biases[classIndex], threshold, error);
 
-                        // Add squared error for this class
-                        classErrors.Add(error * error);
+                        classErrors.Add(error * error); // adds ESM for current class
                     }
                 }
 
@@ -184,11 +178,11 @@ namespace Adaline
                 for (int classIndex = 0; classIndex < labels.Count; classIndex++)
                 {
                     y = AdalineUtils.CalculateY(testVector, weightVectors[classIndex], biases[classIndex]);
-                    outputs.Add(y); // Guarda la salida
+                    outputs.Add(y);
                 }
                 
                 int predictedClassIndex = outputs.IndexOf(outputs.Max());
-                string predictedLabel = labels[predictedClassIndex]; // Etiqueta asociada
+                string predictedLabel = labels[predictedClassIndex];
 
                 Console.WriteLine($"La red neuronal clasificó la entrada como: {predictedLabel} ({outputs[predictedClassIndex]}).");
             }
