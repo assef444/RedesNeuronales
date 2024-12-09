@@ -2,6 +2,7 @@
 using RedesNeuronales.Resources;
 using RedesNeuronales.Resources.Classes;
 using System.Runtime.Versioning;
+using System.Drawing;
 
 namespace Perceptron
 {
@@ -17,7 +18,6 @@ namespace Perceptron
             List<Vector<double>> biases = new();
             bool learned = false;
             InputUtils input = new();
-            int y;
             int error;
             List<PairPattern> patterns = new();
             int numClasses;
@@ -65,11 +65,14 @@ namespace Perceptron
             }
             #endregion
 
+            List<int> errorCounts = new(); // Lista para almacenar el total de errores por iteración
+
             int iteration = 0;
             while (!learned)
             {
                 #region Training phase
                 learned = true;
+                int totalErrors = 0; // Contador de errores en la iteración actual
 
                 Console.WriteLine(string.Format("[{0:00000}] Calculando iteración.", iteration));
 
@@ -90,10 +93,12 @@ namespace Perceptron
                             weightVectors[classIndex] = PerceptronUtils.CalculateWeightVector(weightVectors[classIndex], threshold, error, inputVector);
                             biases[classIndex] = PerceptronUtils.CalculateBias(biases[classIndex], threshold, error);
                             learned = false;
+                            totalErrors++;
                         }
                     }
                 }
 
+                errorCounts.Add(totalErrors); // Guardar el total de errores de esta iteración
                 iteration++;
                 #endregion
             }
@@ -101,6 +106,71 @@ namespace Perceptron
             #region Prints learned weight vector and bias
             Console.Clear();
             Console.WriteLine($"La red neuronal aprendió exitosamente en la iteración {iteration - 1}");
+            #endregion
+
+            #region Plot the error graph
+            Console.WriteLine("\nGenerando gráfico de errores...");
+
+            // Dimensiones del gráfico
+            int width = 800;
+            int height = 400;
+            Bitmap bmp = new Bitmap(width, height);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.White);
+
+                // Dibujar los ejes
+                g.DrawLine(Pens.Black, 50, 350, 750, 350); // Eje X
+                g.DrawLine(Pens.Black, 50, 350, 50, 50);   // Eje Y
+
+                // Etiquetas
+                g.DrawString("Iteraciones", new Font("Arial", 10), Brushes.Black, 375, 370);
+                g.DrawString("Errores", new Font("Arial", 10), Brushes.Black, 5, 200);
+
+                // Escala de datos
+                int maxError = errorCounts.Max();
+                int pointSpacing = (700 / errorCounts.Count);
+                int yScale = (maxError > 0) ? 300 / maxError : 1;
+
+                // Dibujar marcas (ticks) y etiquetas en los ejes
+                int numXTicks = 10; // Divisiones en el eje X
+                int numYTicks = 10; // Divisiones en el eje Y
+
+                // Ticks y etiquetas del eje X (Iteraciones)
+                for (int i = 0; i <= numXTicks; i++)
+                {
+                    int x = 50 + (i * 700 / numXTicks);
+                    int iterLabel = (i * errorCounts.Count / numXTicks);
+                    g.DrawLine(Pens.Gray, x, 350, x, 355); // Ticks
+                    g.DrawString(iterLabel.ToString(), new Font("Arial", 8), Brushes.Black, x - 10, 360); // Etiquetas
+                }
+
+                // Ticks y etiquetas del eje Y (Errores)
+                for (int i = 0; i <= numYTicks; i++)
+                {
+                    int y = 350 - (i * 300 / numYTicks);
+                    int errorLabel = (i * maxError / numYTicks);
+                    g.DrawLine(Pens.Gray, 45, y, 50, y); // Ticks
+                    g.DrawString(errorLabel.ToString(), new Font("Arial", 8), Brushes.Black, 25, y - 5); // Etiquetas
+                }
+
+                // Dibujar puntos y líneas
+                for (int i = 1; i < errorCounts.Count; i++)
+                {
+                    int x1 = 50 + (i - 1) * pointSpacing;
+                    int y1 = 350 - (errorCounts[i - 1] * yScale);
+                    int x2 = 50 + i * pointSpacing;
+                    int y2 = 350 - (errorCounts[i] * yScale);
+
+                    g.DrawLine(Pens.Red, x1, y1, x2, y2);
+                    g.FillEllipse(Brushes.Blue, x1 - 2, y1 - 2, 4, 4); // Puntos
+                }
+            }
+
+            string outputPath = Path.Combine(Directory.GetCurrentDirectory(), "error_graph.png");
+            bmp.Save(outputPath);
+            Console.WriteLine($"Gráfico de errores guardado en: {outputPath}");
             #endregion
 
             #region Test phase
